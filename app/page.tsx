@@ -1,69 +1,156 @@
-import Image from "next/image";
+'use client'
+
+import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTRPC } from './trpc/client'
+import { TRPCClientErrorLike } from '@trpc/client'
+import { AppRouter } from './trpc/routers/_app'
+
+// 1. Declaração da interface Task para o TypeScript reconhecer as propriedades
+interface Task {
+   id: string;
+   title: string;
+   description?: string;
+   created_at: string;
+   completed: boolean;
+}
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+   const trpc = useTRPC()
+   const queryClient = useQueryClient()
+
+   const [title, setTitle] = useState('')
+   const [description, setDescription] = useState('')
+
+   const { data, isLoading, error } = useQuery(
+      trpc.tasks.list.queryOptions()
+   )
+
+   // CORREÇÃO DE TIPAGEM: Adicionado parênteses para o "as Task[]" funcionar corretamente
+   const list = (data ?? []) as Task[];
+
+   const handleCreate = useMutation(
+      trpc.tasks.create.mutationOptions({
+         onSuccess: () => {
+            setTitle('')
+            setDescription('')
+
+            // Reload tasks
+            queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
+         },
+         onError: (error: TRPCClientErrorLike<AppRouter>) => {
+            console.log(error.message)
+         }
+      })
+   )
+
+   const handleUpdate = () => { }
+   const handleToogle = () => { }
+   const handleDelete = () => { }
+
+   // CORREÇÃO DOS HOOKS: Condicionais movidas para DEPOIS de todas as declarações de useMutation
+   if (isLoading) return <p className="py-8 text-center text-slate-500">Carregando tarefas...</p>
+
+   return (
+      <main className="min-h-screen bg-slate-100 px-4 py-12 text-slate-900">
+         <section className="mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+            <header className="mb-8">
+               <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+                  CRUD com tRPC
+               </p>
+               <h1 className="mt-2 text-3xl font-bold">Minhas tarefas</h1>
+
+               <p className="mt-2 text-slate-600">
+                  {list.length === 1 ? '1 tarefa pendente' : `${list.length} tarefas pendentes`}
+               </p>
+            </header>
+
+            <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+               <input
+                  className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="Título da tarefa (obrigatório)"
+                  maxLength={200}
+                  required
+               />
+
+               <textarea
+                  className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="Descrição (opcional)"
+                  maxLength={1000}
+                  rows={2}
+               />
+
+               <button
+                  className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                  type="submit"
+                  disabled={handleCreate.isPending || !title.trim()}
+                  onClick={() => handleCreate.mutate({ title, description: description || undefined })}
+               >
+                  {handleCreate.isPending ? 'Criando...' : 'Criar tarefa'}
+               </button>
+            </form>
+
+            {error && (
+               <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error.message}
+               </p>
+            )}
+
+            <div className="mt-8">
+               {list.length === 0 ? (
+                  <p className="py-8 text-center text-slate-500">Nenhuma tarefa cadastrada.</p>
+               ) : (
+                  <ul className="space-y-3">
+                     {list.map(task => (
+                        <li className="rounded-lg border border-slate-200 p-4 bg-slate-50" key={task.id}>
+                           <div className="flex items-start gap-3">
+                              <input
+                                 className="mt-1 h-5 w-5 accent-blue-600"
+                                 type="checkbox"
+                                 checked={task.completed}
+                              // onChange={() => toggleTask.mutate({ id: task.id })}
+                              />
+
+                              <div className="min-w-0 flex-1">
+                                 <p className={task.completed ? 'line-through text-slate-400' : 'font-semibold'}>
+                                    {task.title}
+                                 </p>
+
+                                 {task.description && (
+                                    <p className="mt-1 text-sm text-slate-600">{task.description}</p>
+                                 )}
+
+                                 <p className="mt-2 text-xs text-slate-400">
+                                    Criada em {new Date(task.created_at).toLocaleString('pt-BR')}
+                                 </p>
+                              </div>
+
+                              <button
+                                 className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                                 type="button"
+                              // onClick={() => startEditing(task)}
+                              >
+                                 Editar
+                              </button>
+
+                              <button
+                                 className="text-sm font-medium text-red-600 hover:text-red-800"
+                                 type="button"
+                              // onClick={() => deleteTask.mutate({ id: task.id })}
+                              >
+                                 Deletar
+                              </button>
+                           </div>
+                        </li>
+                     ))}
+                  </ul>
+               )}
+            </div>
+         </section>
       </main>
-    </div>
-  );
+   )
 }
