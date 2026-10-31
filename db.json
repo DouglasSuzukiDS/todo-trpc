@@ -1,11 +1,12 @@
 {
-   "tasks": [
-      {
-         "id": "welcome-task",
-         "title": "Aprender como o tRPC funciona",
-         "description": "Conhecer queries, mutations e validação com Zod.",
-         "created_at": "2026-10-31T20:42:15.123Z",
-         "completed": false
-      }
-   ]
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Aprender como o tRPC funciona",
+      "description": "Conhecer queries, mutations e validação com Zod.",
+      "created_at": "2026-10-31T20:42:15.123Z",
+      "completed": true
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

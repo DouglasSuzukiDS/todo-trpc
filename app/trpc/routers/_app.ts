@@ -81,7 +81,7 @@ export const appRouter = createTRPCRouter({
 
          }),
 
-      toogle: baseProcedure
+      toggle: baseProcedure
          .input(
             z.object({
                id: z.string(),
@@ -92,7 +92,7 @@ export const appRouter = createTRPCRouter({
             const { id, completed } = input
 
             try {
-               let task = await api.patch(`/tasks/${id}`, { completed: !completed })
+               let task = await api.patch(`/tasks/${id}`, { completed })
 
                return task.data
             } catch (error) {

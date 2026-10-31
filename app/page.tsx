@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTRPC } from './trpc/client'
 import { TRPCClientErrorLike } from '@trpc/client'
 import { AppRouter } from './trpc/routers/_app'
+import { boolean } from 'zod'
 
 // 1. Declaração da interface Task para o TypeScript reconhecer as propriedades
 interface Task {
@@ -45,8 +46,31 @@ export default function Home() {
    )
 
    const handleUpdate = () => { }
-   const handleToogle = () => { }
-   const handleDelete = () => { }
+
+   const handleToggle = useMutation(
+      trpc.tasks.toggle.mutationOptions({
+         onSuccess: () => {
+            // Recarrega a lista de tarefas automaticamente na tela
+            queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
+         },
+         onError: (error: TRPCClientErrorLike<AppRouter>) => {
+            console.error(error.message)
+         }
+      })
+   )
+
+   const handleDelete = useMutation(
+      trpc.tasks.delete.mutationOptions({
+         onSuccess: () => {
+            // Recarrega a lista de tarefas automaticamente na tela
+            queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
+         },
+         onError: (error: TRPCClientErrorLike<AppRouter>) => {
+            console.error(error.message)
+         }
+      })
+   )
+
 
    // CORREÇÃO DOS HOOKS: Condicionais movidas para DEPOIS de todas as declarações de useMutation
    if (isLoading) return <p className="py-8 text-center text-slate-500">Carregando tarefas...</p>
@@ -112,7 +136,7 @@ export default function Home() {
                                  className="mt-1 h-5 w-5 accent-blue-600"
                                  type="checkbox"
                                  checked={task.completed}
-                              // onChange={() => toggleTask.mutate({ id: task.id })}
+                                 onChange={() => handleToggle.mutate({ id: task.id, completed: !task.completed })}
                               />
 
                               <div className="min-w-0 flex-1">
@@ -138,9 +162,9 @@ export default function Home() {
                               </button>
 
                               <button
-                                 className="text-sm font-medium text-red-600 hover:text-red-800"
-                                 type="button"
-                              // onClick={() => deleteTask.mutate({ id: task.id })}
+                                 className={`text-sm font-medium text-red-600 hover:text-red-800 `}
+                                 disabled={task.id === '1'}
+                                 onClick={() => handleDelete.mutate({ id: task.id })}
                               >
                                  Deletar
                               </button>
