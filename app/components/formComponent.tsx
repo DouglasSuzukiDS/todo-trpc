@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export const Task = (task?: Task, action: 'create' | 'update') => {
+export const FormComponent = (task?: Task, action: 'create' | 'update') => {
    const [title, setTitle] = useState('')
    const [description, setDescription] = useState('')
 
