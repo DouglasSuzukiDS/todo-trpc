@@ -21,7 +21,7 @@ export const appRouter = createTRPCRouter({
 
                return tasks.data
             } catch (error) {
-               console.log(`Erorr: ${error}`)
+               console.log(`Error: ${error}`)
 
                return tRPCError('Nao foi possivel buscar as tarefas. Tente novamente mais tarde.')
             }
@@ -35,6 +35,8 @@ export const appRouter = createTRPCRouter({
                const task = await api.get(`/tasks/${input.id}`)
                return task.data
             } catch (error) {
+               console.log(`Error: ${error}`)
+
                return tRPCError('Tarefa não encontrada.')
             }
          }),
@@ -63,7 +65,7 @@ export const appRouter = createTRPCRouter({
 
                return newTask
             } catch (error) {
-               console.log(`Erorr: ${error}`)
+               console.log(`Error: ${error}`)
 
                return tRPCError('Nao foi possivel criar a tarefa. Tente novamente mais tarde.')
             }
@@ -85,7 +87,7 @@ export const appRouter = createTRPCRouter({
 
                return task.data
             } catch (error) {
-               console.log(`Erorr: ${error}`)
+               console.log(`Error: ${error}`)
 
                return tRPCError('Nao foi possivel atualizar a tarefa. Tente novamente mais tarde.')
             }
@@ -106,7 +108,7 @@ export const appRouter = createTRPCRouter({
 
                return task.data
             } catch (error) {
-               console.log(`Erorr: ${error}`)
+               console.log(`Error: ${error}`)
 
                return tRPCError('Nao foi possivel atualizar o status da tarefa. Tente novamente mais tarde.')
             }
@@ -126,7 +128,7 @@ export const appRouter = createTRPCRouter({
 
                return 'Tarefa deletada.'
             } catch (error) {
-               console.log(`Erorr: ${error}`)
+               console.log(`Error: ${error}`)
 
                return tRPCError('Nao foi possivel deletar a tarefa. Tente novamente mais tarde.')
             }

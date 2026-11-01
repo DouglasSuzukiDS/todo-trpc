@@ -74,17 +74,16 @@ export const TaskItem = ({ task }: Props) => {
                </div>
             </div>
 
-            <div className="w-full flex justify-center items-center mt-4 md:w-auto md:justify-end md:mt-0">
+            <div className="w-full flex justify-center items-center mt-4 gap-4 md:w-auto md:justify-end md:mt-0">
                <Button
-                  className="text-sm font-bold text-blue-600 hover:text-blue-800"
-                  variant={"ghost"}
+                  // className="text-sm font-bold text-blue-600 hover:text-blue-800"
+                  className="text-sm font-bold text-blue-600 bg-transparent p-4 border border-blue-600 hover:text-white hover:bg-blue-600 hover:border-none"
                   onClick={() => router.push(`/task?id=${task.id}`)}>
                   Editar</Button>
 
                <Button
-                  variant={'outline'}
                   disabled={task.id === '1'}
-                  className={`text-sm font-bold text-red-600 hover:text-red-800 `}
+                  className="text-sm font-bold text-red-600 bg-transparent p-4 border border-red-600 hover:text-white hover:bg-red-600 hover:border-none"
                   onClick={() => handleDelete.mutate({ id: task.id })}>
                   Deletar</Button>
             </div>

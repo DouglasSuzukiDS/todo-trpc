@@ -28,8 +28,78 @@
     {
       "id": "Rk0b53B4o-w",
       "title": "Aabbb",
-      "description": "aaaabbb..DX!!!",
+      "description": "aaaabbb..DX!",
       "created_at": "2026-11-01T19:46:31.087Z",
+      "completed": true
+    },
+    {
+      "id": "aB7x9L2m-qW",
+      "title": "Configurar rotas do tRPC",
+      "description": "Definir os procedimentos de query e mutation para os módulos de usuários e permissões do sistema.",
+      "created_at": "2026-11-01T10:15:00.123Z",
+      "completed": false
+    },
+    {
+      "id": "kP4v8M1z-rX",
+      "title": "Ajustar estilização dos botões",
+      "description": "Substituir as classes antigas do Tailwind pelas variantes nativas do componente Button do shadcn/ui.",
+      "created_at": "2026-11-01T11:30:22.456Z",
+      "completed": false
+    },
+    {
+      "id": "tY9c3N5v-pL",
+      "title": "Corrigir bug do AlertDialog",
+      "description": "Implementar a flag isMounted no useEffect para evitar que o modal abra sozinho na montagem do Next.js.",
+      "created_at": "2026-11-01T12:05:11.789Z",
+      "completed": true
+    },
+    {
+      "id": "mQ2w6V8b-xZ",
+      "title": "Criar semente de dados para banco",
+      "description": "Gerar um script faker simples para popular a tabela de tarefas com dados iniciais de teste.",
+      "created_at": "2026-11-01T13:45:00.000Z",
+      "completed": false
+    },
+    {
+      "id": "jR5n1K9m-wY",
+      "title": "Revisar acessibilidade do Form",
+      "description": "Adicionar aria-labels nos inputs e garantir o foco correto ao fechar caixas de diálogo.",
+      "created_at": "2026-11-01T14:20:15.321Z",
+      "completed": false
+    },
+    {
+      "id": "hL3s7F2p-qV",
+      "title": "Otimizar cache do React Query",
+      "description": "Configurar o staleTime e ajustar o mecanismo de invalidação automática nas mutações de exclusão.",
+      "created_at": "2026-11-01T15:10:44.987Z",
+      "completed": true
+    },
+    {
+      "id": "gV8b4X1z-mT",
+      "title": "Implementar feedback de Toast",
+      "description": "Adicionar notificações visuais para ações bem-sucedidas e tratamento de erros nas requisições da API.",
+      "created_at": "2026-11-01T15:55:30.654Z",
+      "completed": false
+    },
+    {
+      "id": "fK2m9W5b-rP",
+      "title": "Refatorar validação do Zod",
+      "description": "Aumentar o limite máximo de caracteres na descrição da tarefa e customizar mensagens de erro obrigatórias.",
+      "created_at": "2026-11-01T16:30:12.111Z",
+      "completed": false
+    },
+    {
+      "id": "dW7c3V8x-nQ",
+      "title": "Configurar ambiente de homologação",
+      "description": "Subir uma instância de teste da aplicação na Vercel vinculada à branch de desenvolvimento.",
+      "created_at": "2026-11-01T17:12:05.444Z",
+      "completed": true
+    },
+    {
+      "id": "zP5v1M9s-kL",
+      "title": "Ajustar responsividade dos cards",
+      "description": "Adicionar breakpoints (md, lg) na grid do painel para melhor exibição em telas mobile.",
+      "created_at": "2026-11-01T17:48:19.888Z",
       "completed": false
     }
   ],

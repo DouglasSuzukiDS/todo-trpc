@@ -9,6 +9,7 @@ import {
    AlertDialogTitle,
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Button } from "@base-ui/react"
 
 type Props = {
    triggerText: string
@@ -18,15 +19,13 @@ type Props = {
    cancelBtnAction?: () => void
    confirmBtnText: string
    confirmBtnAction?: () => void
-   open?: boolean
-   onOpenChange?: () => void
 }
 
 export const AlertDialogComponent = (
-   { triggerText, titleText, descriptionText, cancelBtnText, cancelBtnAction, confirmBtnText, confirmBtnAction, open, onOpenChange }: Props) => {
+   { triggerText, titleText, descriptionText, cancelBtnText, cancelBtnAction, confirmBtnText, confirmBtnAction }: Props) => {
    return (
-      <AlertDialog open onOpenChange={onOpenChange}>
-         <AlertDialogTrigger className="font-medium text-slate-500">
+      <AlertDialog>
+         <AlertDialogTrigger className="text-sm font-bold text-red-600 bg-transparent px-4 rounded-lg border border-red-600 hover:text-white hover:bg-red-600 hover:border-none">
             {triggerText}
          </AlertDialogTrigger>
 
@@ -40,11 +39,15 @@ export const AlertDialogComponent = (
             </AlertDialogHeader>
 
             <AlertDialogFooter>
-               <AlertDialogCancel onClick={cancelBtnAction}>
+               <AlertDialogCancel
+                  className="text-sm font-bold text-blue-600 px-4 rounded-lg border border-blue-600 hover:text-white hover:bg-blue-600 hover:border-none"
+                  onClick={cancelBtnAction}>
                   {cancelBtnText}
                </AlertDialogCancel>
 
-               <AlertDialogAction onClick={confirmBtnAction}>
+               <AlertDialogAction
+                  className="text-sm font-bold text-red-600 bg-transparent px-4 rounded-lg border border-red-600 hover:text-white hover:bg-red-600 hover:border-none"
+                  onClick={confirmBtnAction}>
                   {confirmBtnText}
                </AlertDialogAction>
             </AlertDialogFooter>

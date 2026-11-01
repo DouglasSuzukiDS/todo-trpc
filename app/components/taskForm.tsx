@@ -21,7 +21,7 @@ export const TaskForm = () => {
    const searchParams = useSearchParams()
    const taskId = searchParams.get('id')
 
-   const { data: taskItem, isLoading } = useQuery(
+   const { data: taskItem } = useQuery(
       trpc.tasks.getById.queryOptions(
          { id: taskId! },
          { enabled: !!taskId }
@@ -123,7 +123,8 @@ export const TaskForm = () => {
 
             <div className="flex justify-end gap-3">
                <Button
-                  className="font-medium text-blue-600"
+                  // type="button"
+                  className="text-sm font-bold text-blue-600 bg-transparent p-4 border border-blue-600 hover:text-white hover:bg-blue-600 hover:border-none"
                   onClick={() => taskItem ?
                      handleUpdate.mutate({ id: taskId, ...task }) :
                      handleCreate.mutate({ title: task.title!, description: task.description })}>
@@ -132,8 +133,7 @@ export const TaskForm = () => {
 
                <AlertDialogComponent
                   {...alertDialogContent}
-                  open={false}
-                  onOpenChange={() => !false} />
+               />
             </div>
          </form>
       </main >

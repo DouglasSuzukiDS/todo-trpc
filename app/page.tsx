@@ -38,6 +38,7 @@ export default function Home() {
                </div>
 
                <Button
+                  className="text-sm font-bold text-blue-600 bg-transparent p-4 border border-blue-600 hover:text-white hover:bg-blue-600 hover:border-none"
                   onClick={() => router.push(`/task`)}>
                   Nova tarefa
                </Button>
