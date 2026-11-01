@@ -5,6 +5,7 @@ import { useTRPC } from './trpc/client'
 import { TaskItem } from './components/taskItem'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { Task } from './types/task'
 
 export default function Home() {
    const trpc = useTRPC()

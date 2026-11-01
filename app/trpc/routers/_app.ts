@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { baseProcedure, createTRPCRouter } from '../init'
 import { TRPCError } from '@trpc/server'
+import { Task } from '@/app/types/task'
 
 const tRPCError = (message: string) => {
    throw new TRPCError({

@@ -49,7 +49,7 @@ export const TaskItem = ({ task }: Props) => {
    )
 
    return (
-      <li className="rounded-lg border border-slate-200 p-4 bg-slate-50" key={task.id}>
+      <li className="rounded-lg border border-slate-200 p-4 bg-gray-300" key={task.id}>
          <div className="flex flex-col md:flex-row">
             <div className="flex gap-6 flex-1">
                <input
