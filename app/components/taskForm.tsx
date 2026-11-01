@@ -9,6 +9,7 @@ import { TRPCClientErrorLike } from "@trpc/client"
 import { AppRouter } from "../trpc/routers/_app"
 import { toast } from "@/components/ui/toast"
 import { AlertDialogComponent } from "./alertDialog"
+import { Task } from "../types/task"
 
 export const TaskForm = () => {
    const [task, setTask] = useState<Partial<Task>>({ title: '', description: '' })
@@ -44,6 +45,8 @@ export const TaskForm = () => {
       trpc.tasks.create.mutationOptions({
          onSuccess: () => {
             queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
+
+            setTask({ title: '', description: '' })
 
             return toast.add({
                type: 'success',
@@ -94,8 +97,14 @@ export const TaskForm = () => {
    )
 
    useEffect(() => {
-      taskId ?
-         (taskItem && setTask(taskItem)) : setTask({ title: '', description: '' })
+      if (taskId && taskItem) {
+         setTask({ ...taskItem })
+         return
+      }
+
+      if (!taskId) {
+         setTask({ title: '', description: '' })
+      }
    }, [taskId, taskItem])
 
    return (

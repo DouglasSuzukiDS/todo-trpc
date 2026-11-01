@@ -1,9 +1,6 @@
 import { z } from 'zod'
 import { baseProcedure, createTRPCRouter } from '../init'
-import { api } from '@/app/utils/api'
 import { TRPCError } from '@trpc/server'
-
-const taskIdInput = z.object({ id: z.string().min(1, 'O id da tarefa é obrigatório.') })
 
 const tRPCError = (message: string) => {
    throw new TRPCError({
@@ -12,14 +9,14 @@ const tRPCError = (message: string) => {
    })
 }
 
+const tasksList: Task[] = []
+
 export const appRouter = createTRPCRouter({
    tasks: createTRPCRouter({
       list: baseProcedure
          .query(async () => {
             try {
-               const tasks = await api.get('/tasks')
-
-               return tasks.data
+               return [...tasksList]
             } catch (error) {
                console.log(`Error: ${error}`)
 
@@ -32,8 +29,13 @@ export const appRouter = createTRPCRouter({
          .input(z.object({ id: z.string() }))
          .query(async ({ input }) => {
             try {
-               const task = await api.get(`/tasks/${input.id}`)
-               return task.data
+               const task = tasksList.find(task => task.id === input.id)
+
+               if (!task) {
+                  return tRPCError('Tarefa não encontrada.')
+               }
+
+               return task
             } catch (error) {
                console.log(`Error: ${error}`)
 
@@ -61,7 +63,7 @@ export const appRouter = createTRPCRouter({
                   completed: false,
                }
 
-               await api.post('/tasks', newTask)
+               tasksList.push(newTask)
 
                return newTask
             } catch (error) {
@@ -81,11 +83,17 @@ export const appRouter = createTRPCRouter({
          )
          .mutation(async ({ input }) => {
             try {
-               const { id, ...rest } = input
+               const taskIndex = tasksList.findIndex(
+                  (task) => task.id === input.id,
+               )
 
-               let task = await api.patch(`/tasks/${id}`, { ...rest })
+               if (taskIndex === -1) {
+                  return tRPCError('Tarefa não encontrada.')
+               }
 
-               return task.data
+               tasksList[taskIndex] = { ...tasksList[taskIndex], ...input }
+
+               return tasksList[taskIndex]
             } catch (error) {
                console.log(`Error: ${error}`)
 
@@ -102,11 +110,18 @@ export const appRouter = createTRPCRouter({
          )
          .mutation(async ({ input }) => {
             const { id, completed } = input
+            const taskIndex = tasksList.findIndex(
+               (task) => task.id === id,
+            )
+
+            if (taskIndex === -1) {
+               return tRPCError('Tarefa não encontrada.')
+            }
 
             try {
-               let task = await api.patch(`/tasks/${id}`, { completed })
+               tasksList[taskIndex] = { ...tasksList[taskIndex], completed }
 
-               return task.data
+               return tasksList[taskIndex]
             } catch (error) {
                console.log(`Error: ${error}`)
 
@@ -122,9 +137,16 @@ export const appRouter = createTRPCRouter({
          )
          .mutation(async ({ input }) => {
             const { id } = input
+            const taskIndex = tasksList.findIndex(
+               (task) => task.id === id,
+            )
+
+            if (taskIndex === -1) {
+               return tRPCError('Tarefa não encontrada.')
+            }
 
             try {
-               await api.delete(`/tasks/${id}`)
+               tasksList.splice(taskIndex, 1)
 
                return 'Tarefa deletada.'
             } catch (error) {

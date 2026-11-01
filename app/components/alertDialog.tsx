@@ -9,7 +9,6 @@ import {
    AlertDialogTitle,
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@base-ui/react"
 
 type Props = {
    triggerText: string

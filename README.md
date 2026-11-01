@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# ✅ Todo tRPC
 
-First, run the development server:
+Uma aplicação simples e moderna para gerenciamento de tarefas, construída com
+**Next.js**, **React**, **tRPC**, **TanStack Query** e **Zod**.
+
+<p>
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js">
+  <img src="https://img.shields.io/badge/React-19-149eca?logo=react" alt="React">
+  <img src="https://img.shields.io/badge/tRPC-11-2596be?logo=trpc" alt="tRPC">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript" alt="TypeScript">
+</p>
+
+</div>
+
+## ✨ Funcionalidades
+
+- 📝 Criação de tarefas com título e descrição opcional
+- ✏️ Edição de tarefas existentes
+- 🗑️ Exclusão de tarefas
+- ☑️ Marcação de tarefas como concluídas
+- 📋 Listagem de tarefas pendentes e concluídas
+- 🔔 Feedback visual através de toasts
+- 🛡️ Validação de dados com Zod no backend
+- ⚡ Comunicação tipada entre frontend e backend com tRPC
+- 💾 Armazenamento em memória, sem banco de dados
+
+## 🧰 Tecnologias
+
+| Tecnologia | Uso |
+| --- | --- |
+| [Next.js](https://nextjs.org/) | Framework web e rotas da aplicação |
+| [React](https://react.dev/) | Construção da interface |
+| [tRPC](https://trpc.io/) | API tipada entre frontend e backend |
+| [TanStack Query](https://tanstack.com/query) | Cache e estado assíncrono |
+| [Zod](https://zod.dev/) | Validação das entradas |
+| [Tailwind CSS](https://tailwindcss.com/) | Estilização |
+| [Base UI](https://base-ui.com/) | Componentes acessíveis |
+
+## 🚀 Como executar
+
+### Pré-requisitos
+
+- Node.js 20 ou superior
+- npm, pnpm, yarn ou bun
+
+### Instalação
+
+```bash
+npm install
+```
+
+### Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Produção
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+### Qualidade do código
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🗂️ Estrutura principal
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+app/
+├── api/trpc/[trpc]/route.ts   # Endpoint HTTP do tRPC
+├── components/                # Componentes de tarefas e formulário
+├── task/page.tsx              # Página de criação e edição
+├── trpc/
+│   ├── client.tsx             # Provider do tRPC no navegador
+│   ├── init.ts                # Contexto e configuração do tRPC
+│   └── routers/_app.ts        # Procedures e regras do CRUD
+├── types/task.ts              # Tipo da tarefa
+└── page.tsx                   # Página principal da listagem
+```
 
-## Deploy on Vercel
+## 🔌 Operações tRPC
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O router `tasks` disponibiliza:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Procedure | Tipo | Descrição |
+| --- | --- | --- |
+| `tasks.list` | Query | Retorna todas as tarefas |
+| `tasks.getById` | Query | Busca uma tarefa pelo identificador |
+| `tasks.create` | Mutation | Cria uma nova tarefa |
+| `tasks.update` | Mutation | Atualiza título e descrição |
+| `tasks.toggle` | Mutation | Altera o status de conclusão |
+| `tasks.delete` | Mutation | Remove uma tarefa |
+
+## 💾 Armazenamento
+
+As tarefas são mantidas na variável `tasksList`, dentro do router tRPC. Essa
+abordagem atende ao objetivo de manter os dados em memória e não exige banco de
+dados.
+
+> ⚠️ Como os dados ficam apenas na memória do processo, eles são perdidos quando
+> o servidor é reiniciado. Em ambientes serverless, diferentes instâncias
+> também podem possuir listas independentes.
+
+## 🧪 Modelo da tarefa
+
+Atualmente, cada tarefa possui:
+
+```ts
+type Task = {
+  id: string
+  title: string
+  description?: string
+  created_at: string
+  completed: boolean
+}
+```

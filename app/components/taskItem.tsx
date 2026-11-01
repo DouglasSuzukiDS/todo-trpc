@@ -5,6 +5,7 @@ import { AppRouter } from "../trpc/routers/_app"
 import { Button } from "@/components/ui/button"
 import { useTRPC } from "../trpc/client"
 import { useRouter } from "next/navigation"
+import { Task } from "../types/task"
 
 type Props = {
    task: Task
@@ -17,7 +18,7 @@ export const TaskItem = ({ task }: Props) => {
 
    const handleToggle = useMutation(
       trpc.tasks.toggle.mutationOptions({
-         onSuccess: (data) => {
+         onSuccess: () => {
             queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
 
             return toast.add({
@@ -33,7 +34,7 @@ export const TaskItem = ({ task }: Props) => {
 
    const handleDelete = useMutation(
       trpc.tasks.delete.mutationOptions({
-         onSuccess: (data) => {
+         onSuccess: () => {
             queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
 
             return toast.add({
