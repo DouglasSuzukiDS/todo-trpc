@@ -2,9 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from './trpc/client'
-import { TaskComponent } from './components/taskComponent'
+import { TaskItem } from './components/taskItem'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+
 export default function Home() {
    const trpc = useTRPC()
 
@@ -53,7 +54,7 @@ export default function Home() {
                ) : (
                   <ul className="space-y-3">
                      {list.map(task => (
-                        <TaskComponent task={task} key={task.id} />
+                        <TaskItem task={task} key={task.id} />
                      ))}
                   </ul>
                )}

@@ -9,7 +9,8 @@ import { useRouter } from "next/navigation"
 type Props = {
    task: Task
 }
-export const TaskComponent = ({ task }: Props) => {
+
+export const TaskItem = ({ task }: Props) => {
    const trpc = useTRPC()
    const queryClient = useQueryClient()
    const router = useRouter()
@@ -45,6 +46,7 @@ export const TaskComponent = ({ task }: Props) => {
          }
       })
    )
+
    return (
       <li className="rounded-lg border border-slate-200 p-4 bg-slate-50" key={task.id}>
          <div className="flex flex-col md:flex-row">
