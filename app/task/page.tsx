@@ -15,13 +15,13 @@ import { Button } from "@/components/ui/button"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter, useSearchParams } from "next/navigation"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useTRPC } from "../trpc/client"
 import { TRPCClientErrorLike } from "@trpc/client"
 import { AppRouter } from "../trpc/routers/_app"
 import { toast } from "@/components/ui/toast"
 
-export default function Page(task?: Task) {
+const TaskComponent = () => {
    const [title, setTitle] = useState('')
    const [description, setDescription] = useState('')
 
@@ -33,7 +33,7 @@ export default function Page(task?: Task) {
    const taskId = searchParams.get('id')
 
    const tasks = queryClient.getQueriesData<Task[]>(trpc.tasks.list.pathFilter())
-   const taskItem = tasks?.find(t => t.id === taskId)
+   const taskItem = tasks[0][1]?.find(t => t.id === taskId)
 
    const handleCreate = useMutation(
       trpc.tasks.create.mutationOptions({
@@ -84,19 +84,18 @@ export default function Page(task?: Task) {
    )
 
    useEffect(() => {
-      if (taskId) {
+      if (taskItem) {
          setTitle(taskItem.title)
-         setDescription(taskItem.title)
+         taskItem.description && setDescription(taskItem.description)
 
-         console.log(task ? 'sim' : 'nao')
+         console.log(taskItem ? 'sim' : 'nao')
       }
-      console.log(task?.title)
-   }, [taskId])
+   }, [])
 
    return (
       <main className="h-screen flex flex-col items-center rounded-2xl border">
          <h1 className="text-2xl font-bold mt-4 md:text-3xl ">
-            {task ? 'Editar tarefa' : 'Adicionar nota tarefa'}
+            {taskItem ? 'Editar tarefa' : 'Adicionar nota tarefa'}
          </h1>
 
          <form className="max-w-2xl mt-4 px-6 rounded-2x space-y-3">
@@ -119,10 +118,10 @@ export default function Page(task?: Task) {
             <div className="flex justify-end gap-3">
                <Button
                   className="font-medium text-blue-600"
-                  onClick={() => taskId ?
-                     handleUpdate.mutate({ id: taskId, title, description }) :
+                  onClick={() => taskItem ?
+                     handleUpdate.mutate({ id: taskId as string, title, description }) :
                      handleCreate.mutate({ title, description })}>
-                  {task ? 'Criar tarefa' : 'Salvar'}
+                  {taskItem ? 'Salvar' : 'Criar tarefa'}
                </Button>
 
                <AlertDialog>
@@ -154,5 +153,13 @@ export default function Page(task?: Task) {
             </div>
          </form>
       </main >
+   )
+}
+
+export default function Page() {
+   return (
+      <Suspense fallback={<p className="py-8 text-center text-slate-500">Carregando...</p>}>
+         <TaskComponent />
+      </Suspense>
    )
 }

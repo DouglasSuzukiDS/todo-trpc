@@ -70,7 +70,7 @@ export const appRouter = createTRPCRouter({
             try {
                const { id, ...rest } = input
 
-               let task = await api.put(`/tasks/${id}`, { rest })
+               let task = await api.patch(`/tasks/${id}`, { ...rest })
 
                return task.data
             } catch (error) {
@@ -78,7 +78,6 @@ export const appRouter = createTRPCRouter({
 
                return tRPCError('Nao foi possivel atualizar a tarefa. Tente novamente mais tarde.')
             }
-
          }),
 
       toggle: baseProcedure
