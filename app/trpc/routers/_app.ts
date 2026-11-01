@@ -28,6 +28,17 @@ export const appRouter = createTRPCRouter({
 
          }),
 
+      getById: baseProcedure
+         .input(z.object({ id: z.string() }))
+         .query(async ({ input }) => {
+            try {
+               const task = await api.get(`/tasks/${input.id}`)
+               return task.data
+            } catch (error) {
+               return tRPCError('Tarefa não encontrada.')
+            }
+         }),
+
       create: baseProcedure
          .input(
             z.object({
@@ -62,7 +73,7 @@ export const appRouter = createTRPCRouter({
          .input(
             z.object({
                id: z.string(),
-               title: z.string().max(200).optional(),
+               title: z.string().max(200),
                description: z.string().max(1000).optional()
             })
          )

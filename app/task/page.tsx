@@ -12,7 +12,7 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { Suspense, useEffect, useState } from "react"
@@ -24,6 +24,7 @@ import { toast } from "@/components/ui/toast"
 const TaskComponent = () => {
    const [title, setTitle] = useState('')
    const [description, setDescription] = useState('')
+   const [task, setTask] = useState<Partial<Task>>({ title: '', description: '' })
 
    const trpc = useTRPC()
    const queryClient = useQueryClient()
@@ -32,8 +33,12 @@ const TaskComponent = () => {
    const searchParams = useSearchParams()
    const taskId = searchParams.get('id')
 
-   const tasks = queryClient.getQueriesData<Task[]>(trpc.tasks.list.pathFilter())
-   const taskItem = tasks[0][1]?.find(t => t.id === taskId)
+   const { data: taskItem, isLoading } = useQuery(
+      trpc.tasks.getById.queryOptions(
+         { id: taskId! },
+         { enabled: !!taskId }
+      )
+   ) as { data: Task }
 
    const handleCreate = useMutation(
       trpc.tasks.create.mutationOptions({
@@ -62,8 +67,7 @@ const TaskComponent = () => {
    const handleUpdate = useMutation(
       trpc.tasks.update.mutationOptions({
          onSuccess: () => {
-            setTitle('')
-            setDescription('')
+            setTask({ title: '', description: '' })
 
             queryClient.invalidateQueries(trpc.tasks.list.pathFilter())
 
@@ -84,33 +88,28 @@ const TaskComponent = () => {
    )
 
    useEffect(() => {
-      if (taskItem) {
-         setTitle(taskItem.title)
-         taskItem.description && setDescription(taskItem.description)
-
-         console.log(taskItem ? 'sim' : 'nao')
-      }
-   }, [])
+      taskItem && setTask(taskItem)
+   }, [taskItem])
 
    return (
       <main className="h-screen flex flex-col items-center rounded-2xl border">
          <h1 className="text-2xl font-bold mt-4 md:text-3xl ">
-            {taskItem ? 'Editar tarefa' : 'Adicionar nota tarefa'}
+            {task.title ? 'Editar tarefa' : 'Adicionar nota tarefa'}
          </h1>
 
          <form className="max-w-2xl mt-4 px-6 rounded-2x space-y-3">
             <input
                className="w-full rounded border border-slate-300 px-3 py-2"
-               value={title}
-               onChange={(event) => setTitle(event.target.value)}
+               value={task.title}
+               onChange={(event) => setTask(prev => ({ ...prev, title: event.target.value }))}
                maxLength={200}
                required
             />
 
             <textarea
                className="w-full rounded border border-slate-300 px-3 py-2"
-               value={description}
-               onChange={(event) => setDescription(event.target.value)}
+               value={task.description}
+               onChange={(event) => setTask(prev => ({ ...prev, description: event.target.value }))}
                maxLength={1000}
                rows={2}
             />
@@ -119,7 +118,7 @@ const TaskComponent = () => {
                <Button
                   className="font-medium text-blue-600"
                   onClick={() => taskItem ?
-                     handleUpdate.mutate({ id: taskId as string, title, description }) :
+                     handleUpdate.mutate({ id: taskId, ...task }) :
                      handleCreate.mutate({ title, description })}>
                   {taskItem ? 'Salvar' : 'Criar tarefa'}
                </Button>
